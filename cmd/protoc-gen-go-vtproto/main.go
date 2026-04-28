@@ -4,14 +4,14 @@ import (
 	"flag"
 	"strings"
 
-	_ "github.com/planetscale/vtprotobuf/features/clone"
-	_ "github.com/planetscale/vtprotobuf/features/equal"
-	_ "github.com/planetscale/vtprotobuf/features/grpc"
-	_ "github.com/planetscale/vtprotobuf/features/marshal"
-	_ "github.com/planetscale/vtprotobuf/features/pool"
-	_ "github.com/planetscale/vtprotobuf/features/size"
-	_ "github.com/planetscale/vtprotobuf/features/unmarshal"
-	"github.com/planetscale/vtprotobuf/generator"
+	_ "github.com/runtime-radar/vtprotobuf/features/clone"
+	_ "github.com/runtime-radar/vtprotobuf/features/equal"
+	_ "github.com/runtime-radar/vtprotobuf/features/grpc"
+	_ "github.com/runtime-radar/vtprotobuf/features/marshal"
+	_ "github.com/runtime-radar/vtprotobuf/features/pool"
+	_ "github.com/runtime-radar/vtprotobuf/features/size"
+	_ "github.com/runtime-radar/vtprotobuf/features/unmarshal"
+	"github.com/runtime-radar/vtprotobuf/generator"
 
 	"google.golang.org/protobuf/compiler/protogen"
 )

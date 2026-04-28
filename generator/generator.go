@@ -13,7 +13,7 @@ import (
 	"google.golang.org/protobuf/runtime/protoimpl"
 	"google.golang.org/protobuf/types/pluginpb"
 
-	"github.com/planetscale/vtprotobuf/generator/pattern"
+	"github.com/runtime-radar/vtprotobuf/generator/pattern"
 )
 
 type ObjectSet struct {
@@ -62,6 +62,12 @@ type Config struct {
 	WellKnownTypes      bool
 	AllowEmpty          bool
 	BuildTag            string
+	// WKTImportRewrite, when true, makes WellKnownTypeMap and WellKnownFieldMap
+	// defer to message.GoIdent.GoImportPath (set by protogen, possibly via M=
+	// rewrites) instead of the bundled fork's WKT package paths. Use this when
+	// a downstream generator rewrites well-known type imports to alternate
+	// locations (e.g. TinyGo-compatible copies) and expects vtproto to follow.
+	WKTImportRewrite bool
 	// FileEmitter, if non-nil, transforms the generated content of each
 	// _vtproto.pb.go file before it is finalized. Useful for replacing the
 	// auto-generated header or applying file-level rewrites.
