@@ -62,6 +62,10 @@ type Config struct {
 	WellKnownTypes      bool
 	AllowEmpty          bool
 	BuildTag            string
+	// FileEmitter, if non-nil, transforms the generated content of each
+	// _vtproto.pb.go file before it is finalized. Useful for replacing the
+	// auto-generated header or applying file-level rewrites.
+	FileEmitter func(file *protogen.File, content []byte) []byte
 }
 
 type Generator struct {
@@ -108,11 +112,27 @@ func (gen *Generator) Generate() {
 		}
 
 		gf := gen.plugin.NewGeneratedFile(file.GeneratedFilenamePrefix+"_vtproto.pb.go", importPath)
-		gen.generateFile(gf, file)
+		if !gen.generateFile(gf, file) {
+			gf.Skip()
+			continue
+		}
+		if gen.cfg.FileEmitter == nil {
+			continue
+		}
+		content, err := gf.Content()
+		if err != nil {
+			gen.plugin.Error(err)
+			continue
+		}
+		gf.Skip()
+		gf = gen.plugin.NewGeneratedFile(file.GeneratedFilenamePrefix+"_vtproto.pb.go", importPath)
+		if _, err := gf.Write(gen.cfg.FileEmitter(file, content)); err != nil {
+			gen.plugin.Error(err)
+		}
 	}
 }
 
-func (gen *Generator) generateFile(gf *protogen.GeneratedFile, file *protogen.File) {
+func (gen *Generator) generateFile(gf *protogen.GeneratedFile, file *protogen.File) bool {
 	p := &GeneratedFile{
 		GeneratedFile: gf,
 		Config:        gen.cfg,
@@ -161,7 +181,5 @@ func (gen *Generator) generateFile(gf *protogen.GeneratedFile, file *protogen.Fi
 		}
 	}
 
-	if !generated && !gen.cfg.AllowEmpty {
-		gf.Skip()
-	}
+	return generated || gen.cfg.AllowEmpty
 }
