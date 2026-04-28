@@ -332,9 +332,6 @@ func (p *size) message(message *protogen.Message) {
 			continue
 		}
 		ccTypeName := field.GoIdent
-		if p.IsWellKnownType(message) && p.IsLocalMessage(message) {
-			ccTypeName.GoImportPath = ""
-		}
 		p.P(`func (m *`, ccTypeName, `) `, sizeName, `() (n int) {`)
 		p.P(`if m == nil {`)
 		p.P(`return 0`)
