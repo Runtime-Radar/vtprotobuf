@@ -1,4 +1,4 @@
-module github.com/planetscale/vtprotobuf
+module github.com/runtime-radar/vtprotobuf
 
 go 1.21
 

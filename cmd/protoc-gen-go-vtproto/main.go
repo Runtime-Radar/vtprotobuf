@@ -4,14 +4,14 @@ import (
 	"flag"
 	"strings"
 
-	_ "github.com/planetscale/vtprotobuf/features/clone"
-	_ "github.com/planetscale/vtprotobuf/features/equal"
-	_ "github.com/planetscale/vtprotobuf/features/grpc"
-	_ "github.com/planetscale/vtprotobuf/features/marshal"
-	_ "github.com/planetscale/vtprotobuf/features/pool"
-	_ "github.com/planetscale/vtprotobuf/features/size"
-	_ "github.com/planetscale/vtprotobuf/features/unmarshal"
-	"github.com/planetscale/vtprotobuf/generator"
+	_ "github.com/runtime-radar/vtprotobuf/features/clone"
+	_ "github.com/runtime-radar/vtprotobuf/features/equal"
+	_ "github.com/runtime-radar/vtprotobuf/features/grpc"
+	_ "github.com/runtime-radar/vtprotobuf/features/marshal"
+	_ "github.com/runtime-radar/vtprotobuf/features/pool"
+	_ "github.com/runtime-radar/vtprotobuf/features/size"
+	_ "github.com/runtime-radar/vtprotobuf/features/unmarshal"
+	"github.com/runtime-radar/vtprotobuf/generator"
 
 	"google.golang.org/protobuf/compiler/protogen"
 )
@@ -31,6 +31,7 @@ func main() {
 	f.BoolVar(&cfg.Wrap, "wrap", false, "generate wrapper types")
 	f.StringVar(&features, "features", "all", "list of features to generate (separated by '+')")
 	f.StringVar(&cfg.BuildTag, "buildTag", "", "the go:build tag to set on generated files")
+	f.BoolVar(&cfg.WKTImportRewrite, "wktImportRewrite", false, "respect rewritten GoIdent.GoImportPath for well-known types instead of using the bundled fork's WKT package paths")
 
 	protogen.Options{ParamFunc: f.Set}.Run(func(plugin *protogen.Plugin) error {
 		gen, err := generator.NewGenerator(plugin, strings.Split(features, "+"), &cfg)

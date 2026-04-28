@@ -7,7 +7,7 @@ package generator
 import (
 	"fmt"
 
-	"github.com/planetscale/vtprotobuf/vtproto"
+	"github.com/runtime-radar/vtprotobuf/vtproto"
 
 	"google.golang.org/protobuf/compiler/protogen"
 	"google.golang.org/protobuf/proto"
@@ -123,7 +123,7 @@ func (p *GeneratedFile) IsLocalField(field *protogen.Field) bool {
 	return p.LocalPackages[pkg]
 }
 
-const vtHelpersPackage = protogen.GoImportPath("github.com/planetscale/vtprotobuf/protohelpers")
+const vtHelpersPackage = protogen.GoImportPath("github.com/runtime-radar/vtprotobuf/protohelpers")
 
 var helpers = map[string]protogen.GoIdent{
 	"EncodeVarint":            {GoName: "EncodeVarint", GoImportPath: vtHelpersPackage},
@@ -139,7 +139,7 @@ func (p *GeneratedFile) Helper(name string) protogen.GoIdent {
 	return helpers[name]
 }
 
-const vtWellKnownPackage = protogen.GoImportPath("github.com/planetscale/vtprotobuf/types/known/")
+const vtWellKnownPackage = protogen.GoImportPath("github.com/runtime-radar/vtprotobuf/types/known/")
 
 var wellKnownTypes = map[protoreflect.FullName]protogen.GoIdent{
 	"google.protobuf.Any":         {GoName: "Any", GoImportPath: vtWellKnownPackage + "anypb"},
@@ -186,7 +186,9 @@ func (p *GeneratedFile) WellKnownFieldMap(field *protogen.Field) protogen.GoIden
 	if !ff {
 		panic(field.Desc.FullName())
 	}
-	if p.IsLocalField(field) {
+	if p.Config.WKTImportRewrite {
+		res.GoImportPath = field.Parent.GoIdent.GoImportPath
+	} else if p.IsLocalField(field) {
 		res.GoImportPath = ""
 	}
 	return res
@@ -197,7 +199,9 @@ func (p *GeneratedFile) WellKnownTypeMap(message *protogen.Message) protogen.GoI
 		return protogen.GoIdent{}
 	}
 	res := wellKnownTypes[message.Desc.FullName()]
-	if p.IsLocalMessage(message) {
+	if p.Config.WKTImportRewrite {
+		res.GoImportPath = message.GoIdent.GoImportPath
+	} else if p.IsLocalMessage(message) {
 		res.GoImportPath = ""
 	}
 	return res
