@@ -186,7 +186,11 @@ func (p *GeneratedFile) WellKnownFieldMap(field *protogen.Field) protogen.GoIden
 	if !ff {
 		panic(field.Desc.FullName())
 	}
-	res.GoImportPath = field.Parent.GoIdent.GoImportPath
+	if p.Config.WKTImportRewrite {
+		res.GoImportPath = field.Parent.GoIdent.GoImportPath
+	} else if p.IsLocalField(field) {
+		res.GoImportPath = ""
+	}
 	return res
 }
 
@@ -195,7 +199,11 @@ func (p *GeneratedFile) WellKnownTypeMap(message *protogen.Message) protogen.GoI
 		return protogen.GoIdent{}
 	}
 	res := wellKnownTypes[message.Desc.FullName()]
-	res.GoImportPath = message.GoIdent.GoImportPath
+	if p.Config.WKTImportRewrite {
+		res.GoImportPath = message.GoIdent.GoImportPath
+	} else if p.IsLocalMessage(message) {
+		res.GoImportPath = ""
+	}
 	return res
 }
 
